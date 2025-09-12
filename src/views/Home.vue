@@ -105,8 +105,32 @@ const subcol = [
 const onSelectionChange = (selection: any) => {
   console.log('onSelectionChange', selection);
 };
+
+const onSearch = () => {
+  console.log('onSearch');
+};
+
+const onReset = () => {
+  console.log('onReset');
+};
+
+const onRefresh = () => {
+  console.log('onRefresh');
+};
 </script>
 <template>
+  <LwSearch @reset="onReset" @refresh="onRefresh" @search="onSearch">
+    <el-input placeholder="Search" style="width: 240px" />
+    <el-select placeholder="Select" style="width: 240px"></el-select>
+    <el-date-picker
+      type="daterange"
+      unlink-panels
+      range-separator="To"
+      start-placeholder="Start date"
+      end-placeholder="End date"
+    />
+  </LwSearch>
+
   <LwTable
     :data="tableData"
     :columns="columns"

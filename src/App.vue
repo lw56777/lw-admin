@@ -3,6 +3,5 @@
 <template>
   <div class="app">
     <layout />
-    <LwTable></LwTable>
   </div>
 </template>
