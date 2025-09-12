@@ -4,6 +4,7 @@ import router from './router';
 import '~/styles/common.css';
 import 'element-plus/dist/index.css';
 import 'element-plus/theme-chalk/dark/css-vars.css';
+import 'virtual:uno.css';
 
 const app = createApp(App);
 
