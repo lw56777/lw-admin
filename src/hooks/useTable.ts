@@ -1,5 +1,5 @@
 import type { ButtonProps } from 'element-plus';
-import type { ISubcol } from '~/components/global/LwTable';
+import type { ISubcol } from '~/components/LwTable';
 
 // 预设操作
 function createOperation(
