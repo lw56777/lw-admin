@@ -20,6 +20,7 @@ const getAttrs = (item: any): TEmitsAttrs | false => {
         type: 'primary',
         icon: Search,
         name: '搜索',
+        nativeType: 'submit',
         ...attrs,
       };
 
@@ -63,7 +64,10 @@ defineExpose({} as TProps);
 
 <template>
   <el-card>
-    <div class="lw-search flex flex-wrap items-center justify-start gap-4">
+    <el-form
+      class="lw-search flex flex-wrap items-center justify-start gap-4"
+      @submit.prevent
+    >
       <div class="conditions flex flex-wrap gap-4">
         <slot></slot>
       </div>
@@ -77,6 +81,16 @@ defineExpose({} as TProps);
           </el-button>
         </template>
       </div>
-    </div>
+    </el-form>
   </el-card>
 </template>
+
+<style lang="scss">
+.lw-search {
+  .conditions {
+    .el-form-item {
+      margin-bottom: 0;
+    }
+  }
+}
+</style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import useTable from '~/hooks/useTable';
 import { WarningFilled } from '@element-plus/icons-vue';
+import useTable from '~/hooks/useTable';
 
 const { createEdit, createView, createDelete } = useTable();
 
@@ -120,15 +120,23 @@ const onRefresh = () => {
 </script>
 <template>
   <LwSearch @reset="onReset" @refresh="onRefresh" @search="onSearch">
-    <el-input placeholder="Search" style="width: 240px" />
-    <el-select placeholder="Select" style="width: 240px"></el-select>
-    <el-date-picker
-      type="daterange"
-      unlink-panels
-      range-separator="To"
-      start-placeholder="Start date"
-      end-placeholder="End date"
-    />
+    <el-form-item label="关键词：">
+      <el-input placeholder="Search" style="width: 240px" />
+    </el-form-item>
+
+    <el-form-item label="类型：">
+      <el-select placeholder="Select" style="width: 240px"></el-select>
+    </el-form-item>
+
+    <el-form-item label="提交时间：">
+      <el-date-picker
+        type="datetimerange"
+        range-separator="To"
+        start-placeholder="开始时间"
+        end-placeholder="结束时间"
+        value-format="YYYY-MM-DD HH:mm:ss"
+      />
+    </el-form-item>
   </LwSearch>
 
   <LwTable
