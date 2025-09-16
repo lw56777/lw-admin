@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { h } from 'vue';
+import { ElButton } from 'element-plus';
 import { WarningFilled } from '@element-plus/icons-vue';
 import useTable from '~/hooks/useTable';
+import lwDialog from '~/components/LwDialog';
+import DialogContent from '~/components/LwDialog/index.vue';
 
 const { createEdit, createView, createDelete } = useTable();
 
@@ -117,6 +121,17 @@ const onReset = () => {
 const onRefresh = () => {
   console.log('onRefresh');
 };
+
+const handleDialog = () => {
+  lwDialog(
+    DialogContent,
+    {},
+    {
+      title: '弹窗标题',
+      footer: false,
+    },
+  );
+};
 </script>
 <template>
   <LwSearch @reset="onReset" @refresh="onRefresh" @search="onSearch">
@@ -139,48 +154,54 @@ const onRefresh = () => {
     </el-form-item>
   </LwSearch>
 
-  <LwTable
-    :data="tableData"
-    :columns="columns"
-    border
-    :precol="['selection', 'index']"
-    :subcol="subcol"
-    @selectionChange="onSelectionChange"
-  >
-    <LwTableColumn prop="state" label="State" width="180" />
-    <LwTableColumn prop="tag" label="Tag" width="180" />
-    <LwTableColumn
-      :filters="[
-        { text: 'Home', value: 'Home' },
-        { text: 'Office', value: 'Office' },
-      ]"
-      prop="zip"
-      label="Zip"
-      width="180"
-    >
-      <template #default="scope">
-        <el-input v-model="scope.row.zip" />
-      </template>
-      <template #filter-icon="scope">123</template>
-    </LwTableColumn>
+  <el-card>
+    <template #header>
+      <el-button @click="handleDialog">弹窗</el-button>
+    </template>
 
-    <LwTableColumn prop="address" label="Address" width="180">
-      <template #header="{ column }">
-        <span>
-          {{ column.label }}
-          <el-tooltip
-            effect="dark"
-            content="会员充值实付金额（不包含手动调整的储值卡金额、台费卡金额）"
-            placement="top"
-          >
-            <el-icon>
-              <WarningFilled />
-            </el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-    </LwTableColumn>
-  </LwTable>
+    <LwTable
+      :data="tableData"
+      :columns="columns"
+      border
+      :precol="['selection', 'index']"
+      :subcol="subcol"
+      @selectionChange="onSelectionChange"
+    >
+      <LwTableColumn prop="state" label="State" width="180" />
+      <LwTableColumn prop="tag" label="Tag" width="180" />
+      <LwTableColumn
+        :filters="[
+          { text: 'Home', value: 'Home' },
+          { text: 'Office', value: 'Office' },
+        ]"
+        prop="zip"
+        label="Zip"
+        width="180"
+      >
+        <template #default="scope">
+          <el-input v-model="scope.row.zip" />
+        </template>
+        <template #filter-icon="scope">123</template>
+      </LwTableColumn>
+
+      <LwTableColumn prop="address" label="Address" width="180">
+        <template #header="{ column }">
+          <span>
+            {{ column.label }}
+            <el-tooltip
+              effect="dark"
+              content="会员充值实付金额（不包含手动调整的储值卡金额、台费卡金额）"
+              placement="top"
+            >
+              <el-icon>
+                <WarningFilled />
+              </el-icon>
+            </el-tooltip>
+          </span>
+        </template>
+      </LwTableColumn>
+    </LwTable>
+  </el-card>
 </template>
 
 <style scoped lang="scss"></style>
