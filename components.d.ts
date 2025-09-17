@@ -30,6 +30,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Layout: typeof import('./src/components/layout/index.vue')['default']
+    LwDialog: typeof import('./src/components/LwDialog/index.vue')['default']
     LwForm: typeof import('./src/components/LwForm/index.vue')['default']
     LwSearch: typeof import('./src/components/LwSearch/index.vue')['default']
     LwTable: typeof import('./src/components/LwTable/index.vue')['default']

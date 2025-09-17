@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import {
-  ref,
-  useTemplateRef,
-  h,
-  computed,
-  type ComputedRef,
-  type Ref,
-} from 'vue';
+import { ref, useTemplateRef, h, computed, type ComputedRef } from 'vue';
 import { WarningFilled } from '@element-plus/icons-vue';
 import useTable from '~/hooks/useTable';
 import { ElSwitch } from 'element-plus';
 import type { FormRules } from 'element-plus';
 import { useLwForm, type TFormItems } from '~/components/LwForm';
+import { useLwDialog } from '~/components/LwDialog';
+import DialogContent from '~/components/LwDialog/index.vue';
 
 const { createEdit, createView, createDelete } = useTable();
 
@@ -129,6 +124,36 @@ const onRefresh = () => {
   console.log('onRefresh');
 };
 
+const handleDialog = () => {
+  const { createConfirm, createCancel } = useLwDialog(
+    DialogContent,
+    {},
+    {
+      title: '弹窗标题',
+      closeOnClickModal: false,
+      footer: () => [
+        // 自定义确认按钮名称和属性
+        createConfirm({
+          name: '保存',
+          type: 'success',
+          click: () => {
+            console.log('我自己处理保存');
+          },
+        }),
+        // 自定义确认按钮名称
+        createConfirm('审核'),
+        createConfirm({
+          name: '重置',
+          hide: false,
+          click: 'validate',
+        }),
+        // 默认确认按钮
+        createConfirm(),
+        createCancel(),
+      ],
+    },
+  );
+};
 const formData = ref({
   name: '',
   region: '',
@@ -279,31 +304,56 @@ const {
     </el-form-item>
   </LwSearch>
 
-  <LwTable
-    :data="tableData"
-    :columns="columns"
-    border
-    :precol="['selection', 'index']"
-    :subcol="subcol"
-    @selectionChange="onSelectionChange"
-  >
-    <LwTableColumn prop="state" label="State" width="180" />
-    <LwTableColumn prop="tag" label="Tag" width="180" />
-    <LwTableColumn
-      :filters="[
-        { text: 'Home', value: 'Home' },
-        { text: 'Office', value: 'Office' },
-      ]"
-      prop="zip"
-      label="Zip"
-      width="180"
-    >
-      <template #default="scope">
-        <el-input v-model="scope.row.zip" />
-      </template>
-      <template #filter-icon="scope">123</template>
-    </LwTableColumn>
+  <el-card>
+    <template #header>
+      <el-button @click="handleDialog">弹窗</el-button>
+    </template>
 
+    <LwTable
+      :data="tableData"
+      :columns="columns"
+      border
+      :precol="['selection', 'index']"
+      :subcol="subcol"
+      @selectionChange="onSelectionChange"
+    >
+      <LwTableColumn prop="state" label="State" width="180" />
+      <LwTableColumn prop="tag" label="Tag" width="180" />
+      <LwTableColumn
+        :filters="[
+          { text: 'Home', value: 'Home' },
+          { text: 'Office', value: 'Office' },
+        ]"
+        prop="zip"
+        label="Zip"
+        width="180"
+      >
+        <template #default="scope">
+          <el-input v-model="scope.row.zip" />
+        </template>
+        <template #filter-icon="scope">123</template>
+      </LwTableColumn>
+
+      <LwTableColumn prop="address" label="Address" width="180">
+        <template #header="{ column }">
+          <span>
+            {{ column.label }}
+            <el-tooltip
+              effect="dark"
+              content="会员充值实付金额（不包含手动调整的储值卡金额、台费卡金额）"
+              placement="top"
+            >
+              <el-icon>
+                <WarningFilled />
+              </el-icon>
+            </el-tooltip>
+          </span>
+        </template>
+      </LwTableColumn>
+    </LwTable>
+  </el-card>
+
+  <LwTable>
     <LwTableColumn prop="address" label="Address" width="180">
       <template #header="{ column }">
         <span>

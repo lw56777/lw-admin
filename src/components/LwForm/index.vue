@@ -2,7 +2,7 @@
 import { useTemplateRef, computed } from 'vue';
 import type { PropType } from 'vue';
 import { ElInput, ElSelect } from 'element-plus';
-import type { FormInstance, FormRules, FormItemProps } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 import { isString } from '~/utils/tools';
 import type { TFormItems } from '.';
 
