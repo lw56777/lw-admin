@@ -34,8 +34,6 @@ const ruleForm = reactive({
   region: '',
 });
 
-const locationOptions = ['Home', 'Company', 'School'];
-
 const rules = reactive<FormRules>({
   name: [
     { required: true, message: 'Please input Activity name', trigger: 'blur' },
@@ -50,13 +48,19 @@ const rules = reactive<FormRules>({
   ],
 });
 
+const getData = async () => {
+  await new Promise(resolve => setTimeout(resolve, 3000));
+};
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
+
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
       console.log('submit!');
+      await getData();
     } else {
-      console.log('error submit!', fields);
+      return Promise.reject(new Error('验证失败'));
     }
   });
 };
@@ -67,7 +71,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
 };
 
 defineExpose({
-  submitForm,
-  resetForm,
+  validate: () => ruleFormRef.value?.validate(),
+  reset: () => ruleFormRef.value?.resetFields(),
+  confirm: () => submitForm(ruleFormRef.value),
 });
 </script>

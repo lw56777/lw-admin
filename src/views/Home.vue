@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { h } from 'vue';
-import { ElButton } from 'element-plus';
+import { ref, useTemplateRef, h, computed, type ComputedRef } from 'vue';
 import { WarningFilled } from '@element-plus/icons-vue';
 import useTable from '~/hooks/useTable';
-import lwDialog from '~/components/LwDialog';
+import { ElSwitch } from 'element-plus';
+import type { FormRules } from 'element-plus';
+import { useLwForm, type TFormItems } from '~/components/LwForm';
+import { useLwDialog } from '~/components/LwDialog';
 import DialogContent from '~/components/LwDialog/index.vue';
 
 const { createEdit, createView, createDelete } = useTable();
@@ -123,15 +125,163 @@ const onRefresh = () => {
 };
 
 const handleDialog = () => {
-  lwDialog(
+  const { createConfirm, createCancel } = useLwDialog(
     DialogContent,
     {},
     {
       title: '弹窗标题',
-      footer: false,
+      closeOnClickModal: false,
+      footer: () => [
+        // 自定义确认按钮名称和属性
+        createConfirm({
+          name: '保存',
+          type: 'success',
+          click: () => {
+            console.log('我自己处理保存');
+          },
+        }),
+        // 自定义确认按钮名称
+        createConfirm('审核'),
+        createConfirm({
+          name: '重置',
+          hide: false,
+          click: 'validate',
+        }),
+        // 默认确认按钮
+        createConfirm(),
+        createCancel(),
+      ],
     },
   );
 };
+const formData = ref({
+  name: '',
+  region: '',
+  count: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  location: '',
+  type: [],
+  resource: '',
+  desc: '',
+});
+
+const rules: FormRules = {
+  name: [
+    { required: true, message: 'Please input Activity name', trigger: 'blur' },
+    { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+  ],
+  region: [
+    {
+      required: true,
+      message: 'Please select Activity zone',
+      trigger: 'change',
+    },
+  ],
+  count: [
+    {
+      required: true,
+      message: 'Please select Activity count',
+      trigger: 'change',
+    },
+  ],
+  date1: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Please pick a date',
+      trigger: 'change',
+    },
+  ],
+  date2: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Please pick a time',
+      trigger: 'change',
+    },
+  ],
+  location: [
+    {
+      required: true,
+      message: 'Please select a location',
+      trigger: 'change',
+    },
+  ],
+  type: [
+    {
+      type: 'array',
+      required: true,
+      message: 'Please select at least one activity type',
+      trigger: 'change',
+    },
+  ],
+  resource: [
+    {
+      required: true,
+      message: 'Please select activity resource',
+      trigger: 'change',
+    },
+  ],
+  desc: [
+    { required: true, message: 'Please input activity form', trigger: 'blur' },
+  ],
+};
+
+const formItems: ComputedRef<TFormItems> = computed(() => [
+  {
+    label: '姓名',
+    prop: 'name',
+    // type: 'input',
+    placeholder: '请输入姓名',
+    span: 12,
+  },
+  {
+    label: '地区',
+    prop: 'region',
+    type: 'select',
+    hidden: !formData.value.delivery,
+    props: {
+      placeholder: '请选择地区',
+      options: [
+        { label: '北京', value: 'beijing' },
+        { label: '上海', value: 'shanghai' },
+        { label: '广州', value: 'guangzhou' },
+        { label: '深圳', value: 'shenzhen' },
+      ],
+    },
+    span: 12,
+  },
+  {
+    label: '自定义组件',
+    prop: 'delivery',
+    type: () =>
+      h(ElSwitch, {
+        modelValue: formData.value.delivery,
+        onChange: () => {
+          console.log('onChange', formData.value);
+        },
+      }),
+  },
+  {
+    label: '描述',
+    prop: 'desc',
+    placeholder: '请输入描述',
+  },
+]);
+
+const lwFormRef = useTemplateRef('lwFormRef');
+
+const {
+  LwForm: LwFormComp,
+  validate: validateLwForm,
+  resetFields: resetFieldsLwForm,
+} = useLwForm({
+  modelValue: formData,
+  rules,
+  items: formItems,
+});
 </script>
 <template>
   <LwSearch @reset="onReset" @refresh="onRefresh" @search="onSearch">
@@ -202,6 +352,45 @@ const handleDialog = () => {
       </LwTableColumn>
     </LwTable>
   </el-card>
+
+  <LwTable>
+    <LwTableColumn prop="address" label="Address" width="180">
+      <template #header="{ column }">
+        <span>
+          {{ column.label }}
+          <el-tooltip
+            effect="dark"
+            content="会员充值实付金额（不包含手动调整的储值卡金额、台费卡金额）"
+            placement="top"
+          >
+            <el-icon>
+              <WarningFilled />
+            </el-icon>
+          </el-tooltip>
+        </span>
+      </template>
+    </LwTableColumn>
+  </LwTable>
+
+  <LwForm v-model="formData" :rules="rules" :items="formItems" ref="lwFormRef">
+    <template #desc>
+      <el-input v-model="formData.desc" type="textarea" />
+    </template>
+  </LwForm>
+
+  <el-button type="primary" @click="lwFormRef?.validate">校验</el-button>
+  <el-button @click="lwFormRef?.resetFields">重置</el-button>
+
+  <el-divider />
+
+  <LwFormComp>
+    <template #desc>
+      <el-input v-model="formData.desc" type="textarea" />
+    </template>
+  </LwFormComp>
+
+  <el-button type="primary" @click="validateLwForm">校验</el-button>
+  <el-button @click="resetFieldsLwForm">重置</el-button>
 </template>
 
 <style scoped lang="scss"></style>

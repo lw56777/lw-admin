@@ -8,4 +8,5 @@ export {}
 declare global {
   const *: typeof import('@element-plus/icons-vue')
   const ElSpace: typeof import('element-plus/es')['ElSpace']
+  const ElSwitch: typeof import('element-plus/es')['ElSwitch']
 }
