@@ -1,57 +1,58 @@
 <script setup lang="ts">
-import {
-  h,
-  getCurrentInstance,
-  type ComponentInstance,
-  type PropType,
-} from 'vue';
-import { ElTable } from 'element-plus';
-import {
-  buildSlots,
-  type TPrecol,
-  type ISubcol,
-  type TColumns,
-  type IColumns,
-} from '.';
+import { computed, type ComponentInstance, type PropType } from 'vue';
+import { ElTable, type PaginationProps } from 'element-plus';
+import LwTableColumn from './LwTableColumn/index.vue';
 
 const props = defineProps({
   columns: {
-    type: Array<IColumns>,
+    type: Array as PropType<any[]>,
     default: () => [],
   },
-  precol: {
-    // 前置列
-    type: Array<TPrecol>,
-    default: () => [],
-  },
-  precolOptions: {
-    // 前置列的配置
-    type: Object as PropType<TColumns>,
-    default: () => {},
-  },
-  subcol: {
-    // 后置列（操作列）
-    type: Array<ISubcol>,
-    default: () => [],
-  },
-  subcolOptions: {
-    // 操作列的配置
-    type: Object as PropType<TColumns>,
-    default: () => {},
+  pageProps: {
+    type: Object as PropType<Partial<PaginationProps>>,
+    default: () => ({}),
   },
 });
 
-const vm = getCurrentInstance();
+const pageProps = computed(() => {
+  return {
+    total: 0,
+    background: true,
+    hideOnSinglePage: true,
+    layout: 'total, sizes, prev, pager, next',
+    ...props.pageProps,
+  };
+});
 
-const changeRef = (exposed: Record<string, any> | null) => {
-  vm!.exposed = exposed;
-};
+const tableData = defineModel<any[]>('modelValue');
+
+const columns = computed(() => {
+  return props.columns
+    .filter(column => !column.hidden)
+    .map(column => {
+      const { props = {}, ...rest } = column;
+      return {
+        ...rest,
+        ...props,
+      };
+    });
+});
 
 defineExpose({} as ComponentInstance<typeof ElTable>);
 </script>
 
 <template>
-  <component
-    :is="h(ElTable, { ...$attrs, ref: changeRef }, buildSlots(vm, props))"
-  />
+  <div class="lw-table">
+    <el-table :data="tableData" v-bind="$attrs">
+      <LwTableColumn :columns="columns">
+        <template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
+          <slot :name="name" v-bind="slotData" />
+        </template>
+      </LwTableColumn>
+    </el-table>
+
+    <div class="flex justify-end mt-4">
+      <el-pagination v-model="pageProps.currentPage" v-bind="pageProps" />
+    </div>
+  </div>
 </template>

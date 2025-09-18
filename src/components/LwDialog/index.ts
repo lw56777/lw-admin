@@ -10,7 +10,7 @@ export type TDialogProps = Partial<DialogProps> & {
 
 type TFooterBtnProps = Partial<ButtonProps> & {
   name?: string; // 按钮名称
-  hide?: boolean; // 是否执行完毕后关闭
+  hidden?: boolean; // 是否执行完毕后关闭
   click?: string | (() => void); // 事件名称/点击事件
 };
 
@@ -49,11 +49,11 @@ export function useLwDialog(
       setup() {
         const _props = {
           name: '确认',
-          hide: true,
+          hidden: true,
           click: 'confirm',
           ...(isString(props) ? { name: props } : props),
         };
-        const { name, hide, click } = _props;
+        const { name, hidden, click } = _props;
         const loading = ref(false);
 
         const onClick = async () => {
@@ -66,7 +66,7 @@ export function useLwDialog(
               await click?.();
             }
 
-            hide && close();
+            hidden && close();
           } catch (error) {
             throw error;
           } finally {

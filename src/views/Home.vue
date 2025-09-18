@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, h, computed, type ComputedRef } from 'vue';
-import { WarningFilled } from '@element-plus/icons-vue';
-import useTable from '~/hooks/useTable';
 import { ElSwitch } from 'element-plus';
 import type { FormRules } from 'element-plus';
 import { useLwForm, type TFormItems } from '~/components/LwForm';
 import { useLwDialog } from '~/components/LwDialog';
 import DialogContent from '~/components/LwDialog/index.vue';
 
-const { createEdit, createView, createDelete } = useTable();
-
-const tableData = [
+const tableData = ref([
   {
     date: '2016-05-03',
     name: 'Tom',
@@ -47,35 +43,43 @@ const tableData = [
     zip: 'CA 90036',
     tag: 'Office',
   },
-];
+]);
 
-const columns = [
+const columns = computed(() => [
   {
     prop: 'name',
     label: 'Name',
     width: '180',
+    type: 'input',
   },
   {
     label: 'Zip',
     prop: 'zip',
-    isSlot: true,
+    hidden: tableData.value[0].name === 'Tom123',
   },
   {
     prop: 'date',
     label: 'Date',
     width: '180',
   },
-
   {
     prop: 'city',
     label: 'City',
     width: '180',
+    type: 'select',
+    props: {
+      placeholder: '请选择地区',
+      options: [
+        { label: '北京', value: 'beijing' },
+        { label: '上海', value: 'shanghai' },
+        { label: '广州', value: 'guangzhou' },
+        { label: '深圳', value: 'shenzhen' },
+      ],
+    },
   },
   {
-    prop: 'address',
     label: 'Address',
-    isSlot: true,
-    children: [
+    child: [
       {
         prop: 'city',
         label: 'City',
@@ -88,29 +92,7 @@ const columns = [
       },
     ],
   },
-];
-
-const handleEdit = (row: any) => {
-  console.log('handleEdit', row);
-};
-
-const handleView = (row: any) => {
-  console.log('handleView', row);
-};
-
-const handleDelete = (row: any) => {
-  console.log('handleDelete', row);
-};
-
-const subcol = [
-  createEdit(handleEdit),
-  createView(handleView),
-  createDelete(handleDelete),
-];
-
-const onSelectionChange = (selection: any) => {
-  console.log('onSelectionChange', selection);
-};
+]);
 
 const onSearch = () => {
   console.log('onSearch');
@@ -144,7 +126,7 @@ const handleDialog = () => {
         createConfirm('审核'),
         createConfirm({
           name: '重置',
-          hide: false,
+          hidden: false,
           click: 'validate',
         }),
         // 默认确认按钮
@@ -309,68 +291,12 @@ const {
       <el-button @click="handleDialog">弹窗</el-button>
     </template>
 
-    <LwTable
-      :data="tableData"
-      :columns="columns"
-      border
-      :precol="['selection', 'index']"
-      :subcol="subcol"
-      @selectionChange="onSelectionChange"
-    >
-      <LwTableColumn prop="state" label="State" width="180" />
-      <LwTableColumn prop="tag" label="Tag" width="180" />
-      <LwTableColumn
-        :filters="[
-          { text: 'Home', value: 'Home' },
-          { text: 'Office', value: 'Office' },
-        ]"
-        prop="zip"
-        label="Zip"
-        width="180"
-      >
-        <template #default="scope">
-          <el-input v-model="scope.row.zip" />
-        </template>
-        <template #filter-icon="scope">123</template>
-      </LwTableColumn>
-
-      <LwTableColumn prop="address" label="Address" width="180">
-        <template #header="{ column }">
-          <span>
-            {{ column.label }}
-            <el-tooltip
-              effect="dark"
-              content="会员充值实付金额（不包含手动调整的储值卡金额、台费卡金额）"
-              placement="top"
-            >
-              <el-icon>
-                <WarningFilled />
-              </el-icon>
-            </el-tooltip>
-          </span>
-        </template>
-      </LwTableColumn>
+    <LwTable v-model="tableData" :columns="columns" border>
+      <template #date="{ row, $index }">
+        <el-button>{{ row.date + '~' + $index }}</el-button>
+      </template>
     </LwTable>
   </el-card>
-
-  <LwTable>
-    <LwTableColumn prop="address" label="Address" width="180">
-      <template #header="{ column }">
-        <span>
-          {{ column.label }}
-          <el-tooltip
-            effect="dark"
-            content="会员充值实付金额（不包含手动调整的储值卡金额、台费卡金额）"
-            placement="top"
-          >
-            <el-icon>
-              <WarningFilled />
-            </el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-    </LwTableColumn>
-  </LwTable>
 
   <LwForm v-model="formData" :rules="rules" :items="formItems" ref="lwFormRef">
     <template #desc>
@@ -392,5 +318,3 @@ const {
   <el-button type="primary" @click="validateLwForm">校验</el-button>
   <el-button @click="resetFieldsLwForm">重置</el-button>
 </template>
-
-<style scoped lang="scss"></style>

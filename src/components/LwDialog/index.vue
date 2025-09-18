@@ -14,12 +14,6 @@
         <el-option label="Zone two" value="beijing" />
       </el-select>
     </el-form-item>
-    <!-- <el-form-item>
-      <el-button type="primary" @click="submitForm(ruleFormRef)">
-        Create
-      </el-button>
-      <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-    </el-form-item> -->
   </el-form>
 </template>
 

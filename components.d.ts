@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    _index: typeof import('./src/components/LwTable/LwTableColumn/_index.vue')['default']
+    copy: typeof import('./src/components/LwTable/index copy.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -22,6 +24,7 @@ declare module 'vue' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElMain: typeof import('element-plus/es')['ElMain']
     ElOption: typeof import('element-plus/es')['ElOption']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSpace: typeof import('element-plus/es')['ElSpace']
@@ -35,6 +38,7 @@ declare module 'vue' {
     LwSearch: typeof import('./src/components/LwSearch/index.vue')['default']
     LwTable: typeof import('./src/components/LwTable/index.vue')['default']
     LwTableColumn: typeof import('./src/components/LwTable/LwTableColumn/index.vue')['default']
+    RecursionColumn: typeof import('./src/components/LwTable/LwTableColumn/RecursionColumn.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

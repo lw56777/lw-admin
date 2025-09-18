@@ -3,12 +3,12 @@ import type { Component, ComputedRef, VNode } from 'vue';
 import type { FormRules, FormItemProps } from 'element-plus';
 import LwForm from './index.vue';
 
-interface IFormItem extends Partial<Omit<FormItemProps, 'label' | 'prop'>> {
+type IFormItem = Partial<Omit<FormItemProps, 'label' | 'prop'>> & {
   type?: string | (() => VNode) | Component;
   hidden?: boolean;
   span?: number;
   props?: any;
-}
+};
 
 export type TFormItems = IFormItem[];
 

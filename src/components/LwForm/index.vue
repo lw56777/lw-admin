@@ -70,5 +70,3 @@ defineExpose({
     </el-row>
   </el-form>
 </template>
-
-<style scoped lang="scss"></style>
